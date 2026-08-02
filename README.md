@@ -8,6 +8,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6.svg?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Performance](https://img.shields.io/badge/API_Latency-<2ms_Cached-brightgreen.svg?style=for-the-badge&logo=lightning)](https://github.com)
 [![Tests](https://img.shields.io/badge/Tests-Pytest%20%7C%20Vitest-blue.svg?style=for-the-badge&logo=pytest&logoColor=white)](https://github.com)
+[![CI](https://github.com/gautamhardik/Analytica/actions/workflows/ci.yml/badge.svg)](https://github.com/gautamhardik/Analytica/actions/workflows/ci.yml)
 
 > **Analytica** is a tier-1 full-stack data product and enterprise analytics platform powered by the **100,000+ record Brazilian Olist E-Commerce Data Warehouse**. It seamlessly integrates **dimensional data warehousing**, **sub-2ms high-performance async APIs**, **predictive Machine Learning (LightGBM revenue forecasting & RFM K-Means customer segmentation)**, and an **executive-ready Next.js dashboard**.
 
@@ -98,7 +99,7 @@ All endpoints were benchmarked using live HTTP request probes on a local environ
 ## 📁 Repository Structure
 
 ```text
-360/
+Analytica/
 ├── backend/                        # FastAPI Backend Application
 │   ├── app/
 │   │   ├── core/                   # DB connection pool, config & in-memory cache
@@ -188,6 +189,11 @@ Follow these steps to run the services individually on your local environment:
    mysql -u root -p brazilian_ecommerce_dw < SQL/reporting_category_summary.sql
    mysql -u root -p brazilian_ecommerce_dw < SQL/reporting_state_summary.sql
    ```
+   > **Tip:** Skip the individual scripts and load the prebuilt warehouse dump directly
+   > (this is what the Docker Compose flow uses):
+   > ```bash
+   > mysql -u root -p brazilian_ecommerce_dw < SQL/dump_brazilian_ecommerce_dw.sql
+   > ```
 
 ### 3. Backend Setup & Startup
 1. Navigate to the `backend/` directory:
@@ -281,7 +287,7 @@ npm run test
 Analytica is fully configured for zero-downtime deployment on **Hugging Face Spaces** using Docker containers:
 
 * **Container Engine:** Ubuntu 22.04 LTS with integrated MySQL 8.0 server, Python 3.10+, and Node.js 20.
-* **Orchestration Script:** [`start.sh`](file:///c:/Users/hiten/OneDrive/Documents/360/start.sh) handles container startup, MySQL initialization, DB dump ingestion, FastAPI Uvicorn background execution (port 8000), and serving Next.js static assets on port `7860`.
+* **Orchestration Script:** [`start.sh`](./start.sh) handles container startup, MySQL initialization, DB dump ingestion, FastAPI Uvicorn background execution (port 8000), and serving Next.js static assets on port `7860`.
 * **Health Monitoring:** Pre-configured Docker health checks probe `/api/v1/health` every 30 seconds.
 
 ### Deploying to Hugging Face Spaces
