@@ -1,0 +1,7 @@
+Pipeline Stage,Extracted,Loaded,Duration (s),Warnings,Status
+Geography Dimension,"1,000,163","19,015",4.09,0,PASS
+Customer Dimension,"99,441","99,441",55.88,278,PASS
+Seller Dimension,"3,095","3,095",2.35,7,PASS
+Product Dimension,"32,951","32,951",9.83,623,PASS
+Date Dimension,800,800,0.19,0,PASS
+Fact Sales Table,"112,650","112,650",57.15,0,PASS

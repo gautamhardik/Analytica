@@ -1,0 +1,38 @@
+{
+  "algorithm": "RandomForest Regressor (log1p target)",
+  "model_version": "v1.2",
+  "version": "v1.2",
+  "training_date": "2026-08-02",
+  "target": "daily_revenue (log1p transformed)",
+  "features": 112,
+  "best_iteration": null,
+  "train_size": 484,
+  "valid_size": 76,
+  "test_size": 70,
+  "history_start": "2016-09-04",
+  "history_end": "2018-08-24",
+  "data_cutoff": "2018-08-24",
+  "forecast_start": "2018-08-25",
+  "forecast_end": "2018-09-23",
+  "scaling_factor": 1.0,
+  "baseline_revenue": 1.0,
+  "model_file_sha256": "3feef680434f48bda98e11d3e7a6dd920872004463d8f70604d55c1eb4c8f9a9",
+  "ensemble": null,
+  "dm_test": {
+    "vs_naive": {
+      "stat": -1.6393,
+      "p_value": 0.0506
+    },
+    "vs_ma7": {
+      "stat": -4.0462,
+      "p_value": 0.0
+    }
+  },
+  "interval_coverage_90": 0.9,
+  "metrics": {
+    "test_mae": 5557.54,
+    "test_rmse": 7062.97,
+    "test_r2": 0.5859,
+    "test_mape": 19.21
+  }
+}

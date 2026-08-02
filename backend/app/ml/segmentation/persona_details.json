@@ -1,0 +1,26 @@
+[
+  {
+    "persona": "Dormant / Inactive",
+    "customer_count": 42348,
+    "total_revenue": 2574465.21,
+    "avg_order_value": 60.52
+  },
+  {
+    "persona": "VIP Loyalists",
+    "customer_count": 2347,
+    "total_revenue": 739578.9,
+    "avg_order_value": 127.1
+  },
+  {
+    "persona": "Churned High-Value",
+    "customer_count": 10229,
+    "total_revenue": 2432929.4,
+    "avg_order_value": 108.41
+  },
+  {
+    "persona": "High-Value Spenders",
+    "customer_count": 40496,
+    "total_revenue": 10096579.73,
+    "avg_order_value": 247.73
+  }
+]

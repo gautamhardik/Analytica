@@ -1,0 +1,13 @@
+{
+  "algorithm": "Optuna-Tuned LightGBM Regressor (Log Target)",
+  "target": "log_daily_revenue",
+  "train_split": "2016-12-03 to 2018-03-31",
+  "validation_split": "2018-04-01 to 2018-06-15",
+  "test_split": "2018-06-16 to 2018-09-03",
+  "train_rows": 484,
+  "validation_rows": 76,
+  "test_rows": 80,
+  "feature_count": 109,
+  "best_iteration": 94,
+  "confidence_interval_margin_95": 14918.238494910112
+}

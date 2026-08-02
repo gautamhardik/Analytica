@@ -1,0 +1,13 @@
+{
+  "algorithm": "K-Means",
+  "optimal_k": 4,
+  "total_customers": 95420,
+  "pca_components": 5,
+  "personas": {
+    "0": "High-Value Spenders",
+    "1": "At-Risk / Inactive Buyers",
+    "2": "VIP Loyalists",
+    "3": "At-Risk / Inactive Buyers"
+  },
+  "stability_mean_ari": 0.9960712347102533
+}

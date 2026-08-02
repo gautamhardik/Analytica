@@ -1,0 +1,30 @@
+{
+  "Churned High-Value": [
+    "bed_bath_table",
+    "furniture_decor",
+    "computers_accessories",
+    "sports_leisure",
+    "housewares"
+  ],
+  "Dormant / Inactive": [
+    "health_beauty",
+    "bed_bath_table",
+    "sports_leisure",
+    "telephony",
+    "computers_accessories"
+  ],
+  "High-Value Spenders": [
+    "health_beauty",
+    "bed_bath_table",
+    "watches_gifts",
+    "sports_leisure",
+    "computers_accessories"
+  ],
+  "VIP Loyalists": [
+    "bed_bath_table",
+    "furniture_decor",
+    "sports_leisure",
+    "health_beauty",
+    "housewares"
+  ]
+}

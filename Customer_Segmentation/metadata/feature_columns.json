@@ -1,0 +1,13 @@
+[
+  "recency_days",
+  "number_of_orders",
+  "total_revenue",
+  "average_order_value",
+  "total_items_purchased",
+  "unique_categories",
+  "avg_freight",
+  "items_per_order",
+  "category_diversity_ratio",
+  "freight_revenue_ratio",
+  "customer_tenure_days"
+]

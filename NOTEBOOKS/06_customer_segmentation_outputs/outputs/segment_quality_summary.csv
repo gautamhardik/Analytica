@@ -1,0 +1,5 @@
+Cluster,Customers,Customer Share,Revenue Share,Avg Orders,Avg AOV ($),Avg Recency (d),Persona
+0,"40,496",42.4%,63.7%,1.0,247.73,244.8,High-Value Spenders
+1,"42,348",44.4%,16.2%,1.0,60.52,245.5,Dormant / Inactive
+2,"2,347",2.5%,4.7%,2.14,127.1,212.2,VIP Loyalists
+3,"10,229",10.7%,15.4%,1.05,108.41,256.1,Churned High-Value

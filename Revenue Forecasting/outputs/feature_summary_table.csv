@@ -1,0 +1,8 @@
+Feature Group,Count
+Calendar & Cyclical,16
+Holiday & Commercial Events,5
+Fourier Seasonality,6
+"Log Lags (Revenue, Orders, AOV)",36
+Rolling Log Statistics,25
+Business Drivers,8
+Total Model Features,96

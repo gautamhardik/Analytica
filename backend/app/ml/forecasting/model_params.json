@@ -1,0 +1,10 @@
+{
+  "ensemble": null,
+  "quantile": {
+    "objective": "quantile",
+    "alphas": [
+      0.05,
+      0.95
+    ]
+  }
+}

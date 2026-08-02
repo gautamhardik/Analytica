@@ -1,0 +1,77 @@
+[
+  {
+    "feature": "freight_prev_day",
+    "importance_gain": 51.14821334958567,
+    "importance_split": 1.0
+  },
+  {
+    "feature": "day_of_week",
+    "importance_gain": 8.807062698874347,
+    "importance_split": 1.0
+  },
+  {
+    "feature": "day_sin",
+    "importance_gain": 3.592544714837394,
+    "importance_split": 1.0
+  },
+  {
+    "feature": "items_prev_day",
+    "importance_gain": 2.5509986600579166,
+    "importance_split": 1.0
+  },
+  {
+    "feature": "log_rev_lag_1",
+    "importance_gain": 2.215625862368518,
+    "importance_split": 1.0
+  },
+  {
+    "feature": "aov_lag_3",
+    "importance_gain": 1.9358723106475368,
+    "importance_split": 1.0
+  },
+  {
+    "feature": "sellers_prev_day",
+    "importance_gain": 1.8325239232344928,
+    "importance_split": 1.0
+  },
+  {
+    "feature": "orders_lag_90",
+    "importance_gain": 1.0777874814530832,
+    "importance_split": 1.0
+  },
+  {
+    "feature": "rev_lag_7",
+    "importance_gain": 0.9800493342814669,
+    "importance_split": 1.0
+  },
+  {
+    "feature": "log_rev_lag_7",
+    "importance_gain": 0.9506348823874968,
+    "importance_split": 1.0
+  },
+  {
+    "feature": "customers_lag_90",
+    "importance_gain": 0.9446985469927329,
+    "importance_split": 1.0
+  },
+  {
+    "feature": "orders_lag_7",
+    "importance_gain": 0.9098770813623437,
+    "importance_split": 1.0
+  },
+  {
+    "feature": "customers_lag_1",
+    "importance_gain": 0.8331085651245428,
+    "importance_split": 1.0
+  },
+  {
+    "feature": "fourier_sin_3",
+    "importance_gain": 0.7884152328358011,
+    "importance_split": 1.0
+  },
+  {
+    "feature": "orders_lag_1",
+    "importance_gain": 0.7789140413431082,
+    "importance_split": 1.0
+  }
+]

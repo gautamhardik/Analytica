@@ -1,0 +1,18 @@
+{
+  "model_version": "v1.2",
+  "k": 4,
+  "training_date": "2026-08-02",
+  "silhouette_score": 0.3115,
+  "calinski_harabasz": 8620.34,
+  "davies_bouldin": 1.0037,
+  "stability_mean_ari": 0.9961,
+  "total_customers": 95420,
+  "pca_components": 5,
+  "scaler": "StandardScaler",
+  "personas": {
+    "0": "High-Value Spenders",
+    "1": "Dormant / Inactive",
+    "2": "VIP Loyalists",
+    "3": "Churned High-Value"
+  }
+}

@@ -1,0 +1,42 @@
+[
+  {
+    "cluster_id": 0,
+    "persona": "High-Value Spenders",
+    "customer_count": 40496,
+    "total_revenue": 10096579.73,
+    "avg_revenue": 249.32,
+    "avg_orders": 1.0,
+    "avg_recency_days": 244.77,
+    "avg_confidence": 1.0
+  },
+  {
+    "cluster_id": 1,
+    "persona": "Dormant / Inactive",
+    "customer_count": 42348,
+    "total_revenue": 2574465.21,
+    "avg_revenue": 60.79,
+    "avg_orders": 1.0,
+    "avg_recency_days": 245.49,
+    "avg_confidence": 1.0
+  },
+  {
+    "cluster_id": 2,
+    "persona": "VIP Loyalists",
+    "customer_count": 2347,
+    "total_revenue": 739578.9,
+    "avg_revenue": 315.12,
+    "avg_orders": 2.14,
+    "avg_recency_days": 212.2,
+    "avg_confidence": 1.0
+  },
+  {
+    "cluster_id": 3,
+    "persona": "Churned High-Value",
+    "customer_count": 10229,
+    "total_revenue": 2432929.4,
+    "avg_revenue": 237.85,
+    "avg_orders": 1.05,
+    "avg_recency_days": 256.1,
+    "avg_confidence": 1.0
+  }
+]

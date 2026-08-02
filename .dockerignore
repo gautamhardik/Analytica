@@ -1,0 +1,23 @@
+.git
+.gitignore
+*.md
+.env
+.env.*
+frontend/node_modules
+frontend/.next
+frontend/out
+backend/venv
+backend/__pycache__
+.pytest_cache
+*.pyc
+backend/analytica.db
+DOCS
+tests
+node_modules
+DATA
+NOTEBOOKS
+Customer_Segmentation
+Revenue Forecasting
+SQL
+logs
+*.log

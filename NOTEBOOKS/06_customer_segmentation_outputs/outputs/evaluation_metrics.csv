@@ -1,0 +1,2 @@
+Optimal_K,Silhouette_Score,Calinski_Harabasz_Index,Davies_Bouldin_Index,Mean_Stability_ARI,Scaler
+4,0.31153490385626903,8620.341516240276,1.0037037782372211,0.9960712347102533,StandardScaler

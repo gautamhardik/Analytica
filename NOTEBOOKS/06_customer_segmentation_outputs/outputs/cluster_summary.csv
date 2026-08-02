@@ -1,0 +1,5 @@
+Cluster_ID,Persona,Customer_Count,Revenue_Share,Marketing Strategy,Discount Strategy,Retention Strategy,Cross-Selling Opportunity
+0,High-Value Spenders,40496,63.7%,Upsell high-ticket luxury products & premium items.,Free expedited shipping threshold offers.,Post-purchase premium product usage guides.,Complementary premium category products.
+1,Dormant / Inactive,42348,16.2%,Broad win-back emails with general offers.,Free shipping on next order to reduce friction.,Periodic newsletter nudges; no heavy investment.,Top-rated mass product recommendations.
+2,VIP Loyalists,2347,4.7%,Exclusive early product access & VIP tier rewards.,Surprise loyalty gifts over price discounts.,Dedicated concierge & priority customer support.,Bundle premium accessories & high-margin categories.
+3,Churned High-Value,10229,15.4%,Personalized reactivation campaigns referencing past purchases.,Tiered win-back offers capped at first repurchase.,Priority re-engagement emails and membership return incentives.,Premium accessories & high-margin categories once re-engaged.

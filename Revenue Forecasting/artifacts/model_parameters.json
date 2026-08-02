@@ -1,0 +1,14 @@
+{
+  "n_estimators": 347,
+  "learning_rate": 0.0798702302376549,
+  "num_leaves": 31,
+  "max_depth": 8,
+  "subsample": 0.9972616779668446,
+  "colsample_bytree": 0.6328159026455074,
+  "reg_alpha": 0.6276396141256197,
+  "reg_lambda": 4.790594600321978,
+  "objective": "regression",
+  "metric": "rmse",
+  "random_state": 42,
+  "verbose": -1
+}

@@ -1,0 +1,107 @@
+name: analytica
+
+services:
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: brazilian_ecommerce_dw
+      TZ: UTC
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - mysql_data:/var/lib/mysql
+      # Raw dump is seeded by docker/mysql_init.sh (FK-order + redundant-view fix),
+      # so it is mounted OUTSIDE docker-entrypoint-initdb.d to avoid double import.
+      - ./SQL/dump_brazilian_ecommerce_dw.sql:/init/dump_brazilian_ecommerce_dw.sql:ro
+      - ./docker/mysql_init.sh:/docker-entrypoint-initdb.d/01_seed_dump.sh:ro
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    restart: unless-stopped
+    environment:
+      DB_TYPE: mysql
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: brazilian_ecommerce_dw
+      DB_USER: root
+      DB_PASSWORD: root
+      REDIS_URL: redis://redis:6379/0
+      CORS_ORIGINS: http://localhost:3000,http://localhost:8000
+      CACHE_MAXSIZE: 1000
+      CACHE_TTL: 120
+    ports:
+      - "8000:8000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health', timeout=5)"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      backend:
+        condition: service_started
+
+  etl:
+    build:
+      context: .
+      dockerfile: etl/Dockerfile
+    profiles: ["etl"]
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: brazilian_ecommerce_dw
+      DB_USER: root
+      DB_PASSWORD: root
+    volumes:
+      - ./DATA:/app/DATA:ro
+      - ./DOCS:/app/DOCS
+      - ./NOTEBOOKS:/app/NOTEBOOKS
+      - ./SQL:/app/SQL
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: "no"
+
+volumes:
+  mysql_data:
+  redis_data:

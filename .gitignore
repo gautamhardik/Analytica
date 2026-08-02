@@ -1,0 +1,40 @@
+# Virtual Environment
+.venv/
+backend/venv/
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+catboost_info/
+*.egg-info/
+
+# Environment Variables
+.env
+.env.local
+.env.production
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Node
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/coverage/
+
+# Large raw data (regenerated from the SQL dump / ETL)
+DATA/
+
+# Local database artifacts
+*.db
+backend/analytica.db
+
+# Logs
+logs/
+*.log
+DOCS/logs/
+
+# OS Files
+.DS_Store
+Thumbs.db
