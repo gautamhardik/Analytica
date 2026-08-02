@@ -62,7 +62,7 @@ flowchart TD
 * **Pre-Aggregated Materialized Views:** Speeds up high-level KPI aggregations through dedicated reporting summary tables (`reporting_sales_summary`, `reporting_category_summary`).
 
 ### 2. High-Performance Async Backend Engine (FastAPI)
-* **Sub-2ms Response Times:** Integrated custom in-memory TTL key-value caching (`make_cache_key`) across domain services.
+* **Sub-2ms Response Times:** Integrated **Redis-backed distributed caching** (`analytica:*` key namespace with TTL expiration) and process-local `TTLCache` fallback (`make_cache_key`).
 * **Database Connection Pooling:** Tuned SQLAlchemy async engine with `pool_size=15`, `max_overflow=30`, and connection recycling to eliminate connection handshake overhead.
 * **Domain-Driven Architecture:** Clean separation of concerns across `core`, `domains`, `services`, `repositories`, and `routers`.
 
@@ -152,12 +152,27 @@ All endpoints were benchmarked using live HTTP request probes on a local environ
 
 ## 🛠️ Step-by-Step Replication & Setup Guide
 
-Follow these steps to replicate and run the entire project locally on your machine:
+### Option A: Docker Compose Quickstart (Recommended)
 
-### 1. Prerequisites
+Run the entire multi-service stack (MySQL 8.0, Redis 7, FastAPI Backend, Next.js Frontend) with a single command:
+
+```bash
+docker compose up -d
+```
+* **Dashboard (Next.js):** `http://localhost:3000`
+* **Backend API Docs:** `http://localhost:8000/docs`
+* **Trigger ETL Pipeline:** `docker compose --profile etl run --rm etl`
+
+---
+
+### Option B: Local Manual Setup
+
+Follow these steps to run the services individually on your local environment:
+
+#### 1. Prerequisites
 * **Python 3.10+** (Tested on Python 3.13)
 * **Node.js 18+** & **npm**
-* **MySQL Server 8.0+** (or SQLite for local development)
+* **MySQL Server 8.0+** & **Redis 7+** (Optional fallback to local TTL cache)
 
 ### 2. Database Initialization
 1. Log into your MySQL instance and create the database:
