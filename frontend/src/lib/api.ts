@@ -150,7 +150,7 @@ export async function fetcher<T>(url: string): Promise<T> {
     // Recalculate top-level KPIs if filtered in fallback mode
     // Uses single-dimension ratio from the MOST SPECIFIC active filter only.
     // Avoids multiplicative scaling which produces unbounded error for correlated filters.
-    if (dataCopy.kpis && (dataCopy.kpis.total_orders || dataCopy.kpis.total_items_sold) && !dataCopy.kpis.total_states && (month || state || category || seller || segment)) {
+    if (dataCopy.kpis && (dataCopy.kpis.total_orders || dataCopy.kpis.total_items_sold || dataCopy.kpis.total_customers) && !dataCopy.kpis.total_states && (month || state || category || seller || segment)) {
       const fb = await loadFallbackMap();
 
       // Validate known filter values — bail out early for unknown inputs to avoid corrupting KPIs
@@ -266,10 +266,10 @@ export async function fetcher<T>(url: string): Promise<T> {
 
         dataCopy.kpis = {
           ...dataCopy.kpis,
-          total_revenue: { ...dataCopy.kpis.total_revenue, value: filteredRev, formatted: formatRev(filteredRev) },
-          total_orders: { ...dataCopy.kpis.total_orders, value: filteredOrders, formatted: filteredOrders.toLocaleString() },
+          ...(dataCopy.kpis.total_revenue ? { total_revenue: { ...dataCopy.kpis.total_revenue, value: filteredRev, formatted: formatRev(filteredRev) } } : {}),
+          ...(dataCopy.kpis.total_orders ? { total_orders: { ...dataCopy.kpis.total_orders, value: filteredOrders, formatted: filteredOrders.toLocaleString() } } : {}),
           total_customers: { ...dataCopy.kpis.total_customers, value: filteredCust, formatted: filteredCust.toLocaleString() },
-          average_order_value: { ...dataCopy.kpis.average_order_value, value: aov, formatted: `R$ ${aov.toFixed(2)}` }
+          ...(dataCopy.kpis.average_order_value ? { average_order_value: { ...dataCopy.kpis.average_order_value, value: aov, formatted: `R$ ${aov.toFixed(2)}` } } : {}),
         };
       }
     } else if (dataCopy.kpis && dataCopy.kpis.total_states && (state || month)) {
