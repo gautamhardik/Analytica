@@ -74,6 +74,181 @@ function segmentTierMatches(tier: string, segment: string): boolean {
   return false;
 }
 
+// Pre-computed cube (lazy) for intersecting month/state/category/segment filters.
+let cachedCube: any = null;
+let cachedCube2: any = null;
+async function loadCubes() {
+  if (cachedCube && cachedCube2) return { cube: cachedCube, cube2: cachedCube2 };
+  try {
+    const [mod1, mod2] = await Promise.all([import("./mockCube"), import("./mockCube2")]);
+    cachedCube = mod1.fallbackCube;
+    cachedCube2 = mod2.fallbackCube2;
+    return { cube: cachedCube, cube2: cachedCube2 };
+  } catch (e) {
+    return { cube: null, cube2: null };
+  }
+}
+
+// Query the month x state x category x segment cube. Returns summed totals and
+// optionally re-grouped breakdowns mirroring the backend SQL.
+interface CubeTotals {
+  revenue: number;
+  orders: number;
+  customers: number;
+  items: number;
+  freight: number;
+}
+
+function cubeQuery(
+  cube: any,
+  filters: { month?: string; state?: string; category?: string; segment?: string }
+): { totals: CubeTotals; rows: any[] } {
+  const f = filters;
+  const rows: any[] = [];
+  let revenue = 0, orders = 0, customers = 0, items = 0, freight = 0;
+  for (const r of cube.r) {
+    if (f.month && cube.m[r[0]] !== f.month) continue;
+    if (f.state && cube.s[r[1]] !== f.state) continue;
+    if (f.category && cube.c[r[2]] !== f.category) continue;
+    if (f.segment && cube.g[r[3]] !== f.segment) continue;
+    rows.push(r);
+    revenue += r[4];
+    orders += r[5];
+    customers += r[6];
+    items += r[7];
+    freight += r[8];
+  }
+  return { totals: { revenue, orders, customers, items, freight }, rows };
+}
+
+// Query month x state x segment cube for exact distinct customers/orders.
+function cube2Query(
+  cube2: any,
+  filters: { month?: string; state?: string; segment?: string }
+): { customers: number; orders: number; rows: any[] } {
+  const f = filters;
+  const rows: any[] = [];
+  let orders = 0, customers = 0;
+  for (const r of cube2.r) {
+    if (f.month && cube2.m[r[0]] !== f.month) continue;
+    if (f.state && cube2.s[r[1]] !== f.state) continue;
+    if (f.segment && cube2.g[r[2]] !== f.segment) continue;
+    rows.push(r);
+    orders += r[3];
+    customers += r[4];
+  }
+  return { customers, orders, rows };
+}
+
+function formatRevenue(val: number): string {
+  return val >= 1e6 ? `R$ ${(val / 1e6).toFixed(2)}M` :
+    val >= 1e3 ? `R$ ${(val / 1e3).toFixed(1)}k` :
+    `R$ ${val.toFixed(2)}`;
+}
+
+// Rebuild an endpoint payload from the cube using active month/state/category/segment
+// filters, mirroring the backend's SQL grouping so combined filters stay consistent.
+function rebuildFromCube(
+  dataCopy: any,
+  cleanPath: string,
+  cube: any,
+  cube2: any,
+  filters: { month?: string; state?: string; category?: string; segment?: string; seller?: string }
+): any {
+  const f = filters;
+
+  // Base filtered totals for the current KPI scope.
+  const { totals } = cubeQuery(cube, f);
+  // Exact distinct customers/orders when no category filter is active (cube2 has no category dim).
+  const exact = cube2 ? cube2Query(cube2, { month: f.month, state: f.state, segment: f.segment }) : null;
+
+  const finalCustomers = f.category ? totals.customers : (exact ? exact.customers : totals.customers);
+  const finalOrders = f.category ? totals.orders : (exact ? exact.orders : totals.orders);
+  const finalRevenue = totals.revenue;
+  const finalItems = totals.items;
+  const finalFreight = totals.freight;
+  const aov = finalOrders > 0 ? finalRevenue / finalOrders : 0;
+
+  const kpis = dataCopy.kpis ? { ...dataCopy.kpis } : {};
+
+  // Rebuild KPI cards for whichever keys the endpoint exposes.
+  if (kpis.total_revenue) kpis.total_revenue = { ...kpis.total_revenue, value: finalRevenue, formatted: formatRevenue(finalRevenue) };
+  if (kpis.total_orders) kpis.total_orders = { ...kpis.total_orders, value: finalOrders, formatted: finalOrders.toLocaleString() };
+  if (kpis.total_customers) kpis.total_customers = { ...kpis.total_customers, value: finalCustomers, formatted: finalCustomers.toLocaleString() };
+  if (kpis.average_order_value) kpis.average_order_value = { ...kpis.average_order_value, value: aov, formatted: `R$ ${aov.toFixed(2)}` };
+  if (kpis.total_items_sold) kpis.total_items_sold = { ...kpis.total_items_sold, value: finalItems, formatted: finalItems.toLocaleString() };
+  if (kpis.total_states) {
+    // Geography page — count distinct states in scope.
+    const stateCount = f.state ? 1 : new Set(cubeQuery(cube, { month: f.month, category: f.category, segment: f.segment }).rows.map((r: any) => r[1])).size;
+    kpis.total_states = { ...kpis.total_states, value: stateCount, formatted: String(stateCount) };
+  }
+  if (kpis.total_freight) kpis.total_freight = { ...kpis.total_freight, value: finalFreight, formatted: formatRevenue(finalFreight) };
+  dataCopy.kpis = kpis;
+
+  // --- Rebuild breakdown arrays from the cube ---
+
+  // Monthly trend: group rows by month (ignore month filter, like the backend).
+  const trendQuery = cubeQuery(cube, { state: f.state, category: f.category, segment: f.segment });
+  const trendMap = new Map<string, any>();
+  for (const r of trendQuery.rows) {
+    const key = cube.m[r[0]];
+    const agg = trendMap.get(key) || { order_month: key, total_revenue: 0, total_orders: 0, total_customers: 0, total_items_sold: 0, average_order_value: 0 };
+    agg.total_revenue += r[4];
+    agg.total_orders += r[5];
+    agg.total_customers += r[6];
+    agg.total_items_sold += r[7];
+    trendMap.set(key, agg);
+  }
+  const monthlyTrend = [...trendMap.values()].sort((a, b) => (a.order_month < b.order_month ? -1 : 1));
+  for (const m of monthlyTrend) {
+    m.average_order_value = m.total_orders > 0 ? m.total_revenue / m.total_orders : 0;
+  }
+
+  if (dataCopy.monthly_trend && !cleanPath.includes("reports")) {
+    dataCopy.monthly_trend = monthlyTrend;
+  }
+
+  // Categories: group by product_category.
+  const catQuery = cubeQuery(cube, { month: f.month, state: f.state, segment: f.segment });
+  const catMap = new Map<string, any>();
+  for (const r of catQuery.rows) {
+    const key = cube.c[r[2]];
+    const agg = catMap.get(key) || { product_category: key, total_revenue: 0, total_orders: 0, total_items_sold: 0, total_customers: 0, average_item_price: 0 };
+    agg.total_revenue += r[4];
+    agg.total_orders += r[5];
+    agg.total_customers += r[6];
+    agg.total_items_sold += r[7];
+    catMap.set(key, agg);
+  }
+  const categories = [...catMap.values()]
+    .map((c: any) => ({ ...c, average_item_price: c.total_items_sold > 0 ? c.total_revenue / c.total_items_sold : 0 }))
+    .sort((a, b) => b.total_revenue - a.total_revenue);
+
+  if (dataCopy.categories) dataCopy.categories = categories;
+  if (dataCopy.top_categories) dataCopy.top_categories = categories.slice(0, 5);
+  if (dataCopy.bottom_categories) dataCopy.bottom_categories = categories.slice(-5);
+
+  // States: group by state_code.
+  const stateQuery = cubeQuery(cube, { month: f.month, category: f.category, segment: f.segment });
+  const stateMap = new Map<string, any>();
+  for (const r of stateQuery.rows) {
+    const key = cube.s[r[1]];
+    const agg = stateMap.get(key) || { state_code: key, total_revenue: 0, total_orders: 0, total_customers: 0, total_freight_cost: 0 };
+    agg.total_revenue += r[4];
+    agg.total_orders += r[5];
+    agg.total_customers += r[6];
+    agg.total_freight_cost += r[8];
+    stateMap.set(key, agg);
+  }
+  const states = [...stateMap.values()].sort((a, b) => b.total_revenue - a.total_revenue);
+
+  if (dataCopy.states) dataCopy.states = states;
+  if (dataCopy.sales_by_state) dataCopy.sales_by_state = states.slice(0, 6);
+  if (dataCopy.top_states) dataCopy.top_states = states.slice(0, 10);
+
+  return dataCopy;
+}
+
 // Fetcher function for TanStack Query
 // Falls back to static warehouse data when in static mode or backend is unreachable
 export async function fetcher<T>(url: string): Promise<T> {
@@ -147,11 +322,12 @@ export async function fetcher<T>(url: string): Promise<T> {
       }
     }
 
-    // Recalculate top-level KPIs if filtered in fallback mode
-    // Uses single-dimension ratio from the MOST SPECIFIC active filter only.
-    // Avoids multiplicative scaling which produces unbounded error for correlated filters.
-    if (dataCopy.kpis && (dataCopy.kpis.total_orders || dataCopy.kpis.total_items_sold || dataCopy.kpis.total_customers) && !dataCopy.kpis.total_states && (month || state || category || seller || segment)) {
+    // Recalculate top-level KPIs if filtered in fallback mode.
+    // Prefers the pre-computed cube for exact combined-filter results, and
+    // falls back to single-dimension ratio scaling when the cube is unavailable.
+    if (dataCopy.kpis && (dataCopy.kpis.total_orders || dataCopy.kpis.total_items_sold || dataCopy.kpis.total_customers) && (month || state || category || seller || segment)) {
       const fb = await loadFallbackMap();
+      const { cube, cube2 } = await loadCubes();
 
       // Validate known filter values — bail out early for unknown inputs to avoid corrupting KPIs
       const knownStates = fb["/geography"]?.states || [];
@@ -160,6 +336,21 @@ export async function fetcher<T>(url: string): Promise<T> {
         return dataCopy as T;
       }
 
+      // Cube path: exact combined filtering for month/state/category/segment.
+      const active = {
+        month: month && month !== "all" && month !== "all_time" ? month : undefined,
+        state: state && state !== "all" ? state : undefined,
+        category: category && category !== "all" ? category : undefined,
+        segment: segment && segment !== "all" ? segment : undefined,
+      };
+      const hasDim = !!(active.month || active.state || active.category || active.segment);
+
+      if (cube && hasDim) {
+        const rebuilt = rebuildFromCube(dataCopy, cleanPath, cube, cube2, active);
+        return rebuilt as T;
+      }
+
+      // Fallback to ratio scaling (covers seller-only filters and no-cube path).
       const baseRev = dataCopy.kpis?.total_revenue?.value || 15843553.26;
       const baseOrders = dataCopy.kpis?.total_orders?.value || 98666;
       const baseCust = dataCopy.kpis?.total_customers?.value || 95420;
@@ -272,7 +463,19 @@ export async function fetcher<T>(url: string): Promise<T> {
           ...(dataCopy.kpis.average_order_value ? { average_order_value: { ...dataCopy.kpis.average_order_value, value: aov, formatted: `R$ ${aov.toFixed(2)}` } } : {}),
         };
       }
-    } else if (dataCopy.kpis && dataCopy.kpis.total_states && (state || month)) {
+    } else if (dataCopy.kpis && dataCopy.kpis.total_states && (state || month || category || segment)) {
+      const { cube } = await loadCubes();
+      const active = {
+        month: month && month !== "all" && month !== "all_time" ? month : undefined,
+        state: state && state !== "all" ? state : undefined,
+        category: category && category !== "all" ? category : undefined,
+        segment: segment && segment !== "all" ? segment : undefined,
+      };
+      const hasDim = !!(active.month || active.state || active.category || active.segment);
+      if (cube && hasDim) {
+        const rebuilt = rebuildFromCube(dataCopy, cleanPath, cube, undefined, active);
+        return rebuilt as T;
+      }
       if (state && state !== "all" && dataCopy.states) {
         const item = dataCopy.states.find((s: any) => s.state_code?.toUpperCase() === state.toUpperCase());
         if (item) {
