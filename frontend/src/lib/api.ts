@@ -221,13 +221,19 @@ export async function fetcher<T>(url: string): Promise<T> {
         }
       }
 
-      // Month filter
+      // Month filter — use exec monthly_trend which has total_customers
       if (month && month !== "all" && month !== "all_time" && revRatio === null) {
-        const item = allMonths.find((m: any) => m.order_month === month);
+        const execMonths = fb["/executive"]?.monthly_trend || [];
+        const item = execMonths.find((m: any) => m.order_month === month);
         if (item) {
           revRatio = (item.total_revenue || 0) / baseRev;
           ordRatio = (item.total_orders || 0) / baseOrders;
           custRatio = item.total_customers != null ? (item.total_customers || 0) / baseCust : ordRatio;
+        } else {
+          // Month not found in data — set ratios to 0 so KPIs show 0 (not stale unfiltered values)
+          revRatio = 0;
+          ordRatio = 0;
+          custRatio = 0;
         }
       }
 
@@ -240,7 +246,8 @@ export async function fetcher<T>(url: string): Promise<T> {
         if (item) {
           revRatio = (item.total_revenue || 0) / baseRev;
           ordRatio = (item.total_orders || 0) / baseOrders;
-          custRatio = (item.total_customers || 0) / baseCust;
+          // Category data may lack total_customers — use orders ratio as approximation
+          custRatio = item.total_customers != null ? (item.total_customers || 0) / baseCust : ordRatio;
         }
       }
 
