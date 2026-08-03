@@ -62,6 +62,18 @@ export interface PaginatedResponse<T> {
   message: string;
 }
 
+// Segment filter maps a customer segment (new / repeat / vip) onto its spend-tier
+// brackets using the tier's numeric range, so it survives tier-name formatting.
+function segmentTierMatches(tier: string, segment: string): boolean {
+  const nums = (tier.match(/\d+(?:\.\d+)?/g) || []).map(Number);
+  if (nums.length === 0) return false;
+  const lower = tier.toLowerCase().includes("under") ? 0 : nums[0];
+  if (segment === "new") return lower < 100;
+  if (segment === "repeat") return lower >= 100 && lower < 500;
+  if (segment === "vip") return lower >= 500;
+  return false;
+}
+
 // Fetcher function for TanStack Query
 // Falls back to static warehouse data when in static mode or backend is unreachable
 export async function fetcher<T>(url: string): Promise<T> {
@@ -114,18 +126,31 @@ export async function fetcher<T>(url: string): Promise<T> {
 
     if (segment && segment !== "all") {
       if (dataCopy.spending_tiers) {
-        let filtered = dataCopy.spending_tiers;
-        if (segment === "new") filtered = filtered.filter((t: any) => t.tier.includes("0-100"));
-        else if (segment === "repeat") filtered = filtered.filter((t: any) => t.tier.includes("100-500"));
-        else if (segment === "vip") filtered = filtered.filter((t: any) => t.tier.includes("500+"));
+        const filtered = dataCopy.spending_tiers.filter((t: any) => segmentTierMatches(t.tier, segment));
         if (filtered.length > 0) dataCopy.spending_tiers = filtered;
+      }
+    }
+
+    // Segment filter on customer-centric endpoints (KPIs without total_orders): update
+    // the customer KPI directly from the matched spend tiers.
+    if (segment && segment !== "all" && dataCopy.spending_tiers && dataCopy.kpis?.total_customers && !dataCopy.kpis.total_orders) {
+      const segCust = dataCopy.spending_tiers.reduce((s: number, t: any) => s + (t.customer_count || 0), 0);
+      const segRev = dataCopy.spending_tiers.reduce((s: number, t: any) => s + (t.tier_revenue || 0), 0);
+      if (segCust > 0) {
+        dataCopy.kpis = {
+          ...dataCopy.kpis,
+          total_customers: { ...dataCopy.kpis.total_customers, value: segCust, formatted: segCust.toLocaleString() },
+          ...(dataCopy.kpis.avg_lifetime_spend
+            ? { avg_lifetime_spend: { ...dataCopy.kpis.avg_lifetime_spend, value: segRev / segCust, formatted: `R$ ${(segRev / segCust).toFixed(2)}` } }
+            : {}),
+        };
       }
     }
 
     // Recalculate top-level KPIs if filtered in fallback mode
     // Uses single-dimension ratio from the MOST SPECIFIC active filter only.
     // Avoids multiplicative scaling which produces unbounded error for correlated filters.
-    if (dataCopy.kpis && dataCopy.kpis.total_orders && (month || state || category || seller || segment)) {
+    if (dataCopy.kpis && (dataCopy.kpis.total_orders || dataCopy.kpis.total_items_sold) && !dataCopy.kpis.total_states && (month || state || category || seller || segment)) {
       const fb = await loadFallbackMap();
 
       // Validate known filter values — bail out early for unknown inputs to avoid corrupting KPIs
@@ -167,21 +192,17 @@ export async function fetcher<T>(url: string): Promise<T> {
 
       // Segment filter (computed from spending_tiers ratios when available, else estimate)
       if (segment && segment !== "all" && revRatio === null) {
-        const tiers = dataCopy.spending_tiers || [];
+        const tiers = dataCopy.spending_tiers?.length ? dataCopy.spending_tiers : fb["/customers"]?.spending_tiers || [];
         const totalTierCust = tiers.reduce((s: number, t: any) => s + (t.customer_count || 0), 0);
         const totalTierRev = tiers.reduce((s: number, t: any) => s + (t.tier_revenue || 0), 0);
         if (totalTierCust > 0) {
           let segCust = 0;
           let segRev = 0;
-          if (segment === "new") {
-            segCust = tiers.filter((t: any) => t.tier.includes("0-100")).reduce((s: number, t: any) => s + (t.customer_count || 0), 0);
-            segRev = tiers.filter((t: any) => t.tier.includes("0-100")).reduce((s: number, t: any) => s + (t.tier_revenue || 0), 0);
-          } else if (segment === "repeat") {
-            segCust = tiers.filter((t: any) => t.tier.includes("100-500")).reduce((s: number, t: any) => s + (t.customer_count || 0), 0);
-            segRev = tiers.filter((t: any) => t.tier.includes("100-500")).reduce((s: number, t: any) => s + (t.tier_revenue || 0), 0);
-          } else if (segment === "vip") {
-            segCust = tiers.filter((t: any) => t.tier.includes("500+")).reduce((s: number, t: any) => s + (t.customer_count || 0), 0);
-            segRev = tiers.filter((t: any) => t.tier.includes("500+")).reduce((s: number, t: any) => s + (t.tier_revenue || 0), 0);
+          for (const t of tiers) {
+            if (segmentTierMatches(t.tier, segment)) {
+              segCust += t.customer_count || 0;
+              segRev += t.tier_revenue || 0;
+            }
           }
           revRatio = totalTierRev > 0 ? segRev / totalTierRev : null;
           ordRatio = totalTierCust > 0 ? segCust / totalTierCust : null;
@@ -206,7 +227,7 @@ export async function fetcher<T>(url: string): Promise<T> {
         if (item) {
           revRatio = (item.total_revenue || 0) / baseRev;
           ordRatio = (item.total_orders || 0) / baseOrders;
-          custRatio = (item.total_customers || 0) / baseCust;
+          custRatio = item.total_customers != null ? (item.total_customers || 0) / baseCust : ordRatio;
         }
       }
 
