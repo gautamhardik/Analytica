@@ -6,8 +6,8 @@
 [![LightGBM](https://img.shields.io/badge/LightGBM-4.0+-FF6F00.svg?style=for-the-badge&logo=lightgbm&logoColor=white)](https://lightgbm.readthedocs.io)
 [![MySQL](https://img.shields.io/badge/MySQL-8.0+-4479A1.svg?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6.svg?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
-[![Performance](https://img.shields.io/badge/API_Latency-<2ms_Cached-brightgreen.svg?style=for-the-badge&logo=lightning)](https://github.com)
-[![Tests](https://img.shields.io/badge/Tests-Pytest%20%7C%20Vitest-blue.svg?style=for-the-badge&logo=pytest&logoColor=white)](https://github.com)
+[![Performance](https://img.shields.io/badge/API_Latency-<2ms_Cached-brightgreen.svg?style=for-the-badge&logo=lightning)](https://github.com/gautamhardik/Analytica)
+[![Tests](https://img.shields.io/badge/Tests-Pytest%20%7C%20Vitest-blue.svg?style=for-the-badge&logo=pytest&logoColor=white)](https://github.com/gautamhardik/Analytica)
 [![CI](https://github.com/gautamhardik/Analytica/actions/workflows/ci.yml/badge.svg)](https://github.com/gautamhardik/Analytica/actions/workflows/ci.yml)
 
 > **Analytica** is a tier-1 full-stack data product and enterprise analytics platform powered by the **100,000+ record Brazilian Olist E-Commerce Data Warehouse**. It seamlessly integrates **dimensional data warehousing**, **sub-2ms high-performance async APIs**, **predictive Machine Learning (LightGBM revenue forecasting & RFM K-Means customer segmentation)**, and an **executive-ready Next.js dashboard**.
@@ -22,6 +22,54 @@ If you are reviewing this project for a **Senior Data Scientist**, **Machine Lea
 * **Sub-2ms API Latency:** Engineered a multi-layered FastAPI backend with custom in-memory TTL caching and SQLAlchemy async connection pooling (`pool_size=15`), reducing endpoint response times from ~300ms to **< 1.2ms**.
 * **Predictive & Segment ML Engines:** Built a **LightGBM time-series revenue forecasting model** (with residual analysis) and an **RFM K-Means Clustering model** (validated via Silhouette & Davies-Bouldin scores with PCA 2D projections).
 * **Automated AI Executive Insights:** Includes an automated C-suite report generator synthesizing revenue health, segment risks, and forecast projections into actionable strategic recommendations.
+
+---
+
+## 📸 Executive Platform Showcase (Live Dashboard Screenshots)
+
+### 1. C-Suite Executive Overview & KPI Dashboard
+*Real-time executive cockpit displaying revenue metrics, order velocity, customer acquisition, and dynamic multi-dimensional filters.*
+![Executive Dashboard](DOCS/screenshots/01_executive_dashboard.png)
+
+<br/>
+
+### 2. Machine Learning Customer Segmentation (RFM + PCA K-Means)
+*Unsupervised ML model segmenting 100k+ customers into behavioral personas with 2D PCA cluster visualization and metrics.*
+![Customer Segmentation](DOCS/screenshots/06_ml_segmentation.png)
+
+<br/>
+
+### 3. LightGBM Time-Series Revenue Forecasting Engine
+*Predictive time-series model forecasting daily revenue trends with historical accuracy comparison and residual error distributions.*
+![Revenue Forecasting](DOCS/screenshots/07_revenue_forecasting.png)
+
+<br/>
+
+### 4. Automated AI Business Summary & C-Suite Report Generator
+*Data synthesis engine combining financial health, customer churn risks, and category growth opportunities into dynamic markdown reports.*
+![AI Executive Summary](DOCS/screenshots/08_ai_executive_summary.png)
+
+<br/>
+
+<details>
+<summary><b>🔍 View Additional Workspace Screenshots (Sales, Customers, Products, Geography, Reports)</b></summary>
+
+#### Sales & Revenue Analytics Workspace
+![Sales Analytics](DOCS/screenshots/02_sales_analytics.png)
+
+#### Customer Health & Retention Analytics
+![Customer Health](DOCS/screenshots/03_customer_health.png)
+
+#### Product & Category Performance
+![Product Performance](DOCS/screenshots/04_product_performance.png)
+
+#### Geographic Revenue Distribution
+![Geographic Analytics](DOCS/screenshots/05_geographic_analytics.png)
+
+#### Enterprise Data Reports Explorer
+![Data Reports Explorer](DOCS/screenshots/09_data_reports_explorer.png)
+
+</details>
 
 ---
 
