@@ -25,6 +25,14 @@ If you are reviewing this project for a **Senior Data Scientist**, **Machine Lea
 
 ---
 
+## 🎥 Full System Walkthrough & Demo Video
+
+https://github.com/user-attachments/assets/e9e9354d-bc9d-4434-b829-712ba0c8069a
+
+> *Watch full end-to-end interactive demo of Analytica's Next.js executive dashboard, sub-2ms FastAPI analytics query engine, customer segmentation clusters, and automated C-suite reports.*
+
+---
+
 ## 📸 Executive Platform Showcase (Live Dashboard Screenshots)
 
 ### 1. C-Suite Executive Overview & KPI Dashboard
