@@ -130,7 +130,7 @@ export default function ForecastingPage() {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <h1 className="text-2xl font-outfit font-bold tracking-tight">Revenue Forecasting</h1>
-            <p className="text-muted-foreground">LightGBM predictive engine with dynamic multi-horizon scenario modeling.</p>
+            <p className="text-muted-foreground">RandomForest predictive engine with dynamic multi-horizon scenario modeling.</p>
           </div>
         </div>
 
