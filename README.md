@@ -1,5 +1,6 @@
 # ⚡ Analytica — Enterprise E-Commerce Analytics & ML Platform
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Hugging_Face_Spaces-FFD21E.svg?style=for-the-badge&logo=huggingface&logoColor=black)](https://huggingface.co/spaces/Hardik-25/Analytica)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.110+-009688.svg?style=for-the-badge&logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com)
 [![Next.js](https://img.shields.io/badge/Next.js-16+-000000.svg?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org)
 [![Polars](https://img.shields.io/badge/Polars-1.0+-CDC8B0.svg?style=for-the-badge&logo=polars&logoColor=black)](https://pola.rs)
@@ -7,10 +8,11 @@
 [![MySQL](https://img.shields.io/badge/MySQL-8.0+-4479A1.svg?style=for-the-badge&logo=mysql&logoColor=white)](https://www.mysql.com)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0+-3178C6.svg?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
 [![Performance](https://img.shields.io/badge/API_Latency-<2ms_Cached-brightgreen.svg?style=for-the-badge&logo=lightning)](https://github.com/gautamhardik/Analytica)
-[![Tests](https://img.shields.io/badge/Tests-Pytest%20%7C%20Vitest-blue.svg?style=for-the-badge&logo=pytest&logoColor=white)](https://github.com/gautamhardik/Analytica)
 [![CI](https://github.com/gautamhardik/Analytica/actions/workflows/ci.yml/badge.svg)](https://github.com/gautamhardik/Analytica/actions/workflows/ci.yml)
 
 > **Analytica** is a tier-1 full-stack data product and enterprise analytics platform powered by the **100,000+ record Brazilian Olist E-Commerce Data Warehouse**. It seamlessly integrates **dimensional data warehousing**, **sub-2ms high-performance async APIs**, **predictive Machine Learning (LightGBM revenue forecasting & RFM K-Means customer segmentation)**, and an **executive-ready Next.js dashboard**.
+>
+> 🚀 **Live Interactive App:** [huggingface.co/spaces/Hardik-25/Analytica](https://huggingface.co/spaces/Hardik-25/Analytica)
 
 ---
 
