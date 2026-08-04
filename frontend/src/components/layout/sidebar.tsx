@@ -6,15 +6,15 @@ import { LayoutDashboard, LineChart, Users, ShoppingBag, Map, FileText, Settings
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
-  { name: "Executive Workspace", href: "/", icon: LayoutDashboard },
-  { name: "Revenue Workspace", href: "/sales", icon: LineChart },
-  { name: "Customer Workspace", href: "/customers", icon: Users },
-  { name: "Product Workspace", href: "/products", icon: ShoppingBag },
-  { name: "Geography Workspace", href: "/geography", icon: Map },
-  { name: "Segment Workspace", href: "/segmentation", icon: Layers },
-  { name: "Forecast Workspace", href: "/forecasting", icon: TrendingUp },
+  { name: "Executive Overview", href: "/", icon: LayoutDashboard },
+  { name: "Revenue Analytics", href: "/sales", icon: LineChart },
+  { name: "Customers", href: "/customers", icon: Users },
+  { name: "Products", href: "/products", icon: ShoppingBag },
+  { name: "Geography", href: "/geography", icon: Map },
+  { name: "Personas", href: "/segmentation", icon: Layers },
+  { name: "Forecasting", href: "/forecasting", icon: TrendingUp },
   { name: "Executive Summary", href: "/executive-summary", icon: Sparkles },
-  { name: "Reports Workspace", href: "/reports", icon: FileText },
+  { name: "Reports", href: "/reports", icon: FileText },
   { name: "Settings", href: "/settings", icon: Settings },
 ];
 
